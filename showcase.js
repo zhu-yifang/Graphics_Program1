@@ -257,7 +257,70 @@ function makeSphere(){
 }
 
 function makeTorus(){
+    const numBigCircle = 16;
+    const numSmallCircle = 16;
+    const dPhi = (2 * Math.PI) / numBigCircle;
+    const dTheta = (2 * Math.PI) / numSmallCircle;
+    const Radius = 1;
+    const radius = 0.5;
+    glBegin(GL_TRIANGLES, "Torus", true);
+    for (let i = 0; i < numBigCircle; i++){
+        let phi = dPhi * i;
+        let center0_x = Radius * Math.cos(phi);
+        let center0_y = Radius * Math.sin(phi);
+        let center0_z = 0;
+        let center1_x = Radius * Math.cos(phi + dPhi);
+        let center1_y = Radius * Math.sin(phi + dPhi);
+        let center1_z = 0;
+        for (let j = 0; j < numSmallCircle; j++){
+            let theta = dTheta * j;
 
+            let a0_length = Math.sqrt(Math.pow(center0_x, 2) + Math.pow(center0_y, 2));
+            let a0_x = center0_x / a0_length;
+            let a0_y = center0_y / a0_length;
+            let a0_z = 0;
+
+            let b0_x = 0;
+            let b0_y = 0;
+            let b0_z = 1;
+
+            let x0 = center0_x + radius * Math.cos(theta) * a0_x + radius * Math.sin(theta) * b0_x;
+            let y0 = center0_y + radius * Math.cos(theta) * a0_y + radius * Math.sin(theta) * b0_y;
+            let z0 = center0_z + radius * Math.cos(theta) * a0_z + radius * Math.sin(theta) * b0_z;
+
+            let x1 = center0_x + radius * Math.cos(theta + dTheta) * a0_x + radius * Math.sin(theta + dTheta) * b0_x;
+            let y1 = center0_y + radius * Math.cos(theta + dTheta) * a0_y + radius * Math.sin(theta + dTheta) * b0_y;
+            let z1 = center0_z + radius * Math.cos(theta + dTheta) * a0_z + radius * Math.sin(theta + dTheta) * b0_z;
+
+            let a1_length = Math.sqrt(Math.pow(center1_x, 2) + Math.pow(center1_y, 2));
+            let a1_x = center1_x / a1_length;
+            let a1_y = center1_y / a1_length;
+            let a1_z = 0;
+
+            let b1_x = 0;
+            let b1_y = 0;
+            let b1_z = 1;
+
+            let x2 = center1_x + radius * Math.cos(theta) * a1_x + radius * Math.sin(theta) * b1_x;
+            let y2 = center1_y + radius * Math.cos(theta) * a1_y + radius * Math.sin(theta) * b1_y;
+            let z2 = center1_z + radius * Math.cos(theta) * a1_z + radius * Math.sin(theta) * b1_z;
+
+            let x3 = center1_x + radius * Math.cos(theta + dTheta) * a1_x + radius * Math.sin(theta + dTheta) * b1_x;
+            let y3 = center1_y + radius * Math.cos(theta + dTheta) * a1_y + radius * Math.sin(theta + dTheta) * b1_y;
+            let z3 = center1_z + radius * Math.cos(theta + dTheta) * a1_z + radius * Math.sin(theta + dTheta) * b1_z;
+ 
+            glColor3f(0.25, 0.50, 0.75);
+            glVertex3f(x0, y0, z0);
+            glVertex3f(x1, y1, z1);
+            glVertex3f(x3, y3, z3);
+            glColor3f(0.50, 0.75, 0.80);
+            glVertex3f(x0, y0, z0);
+            glVertex3f(x3, y3, z3);
+            glVertex3f(x2, y2, z2);
+
+        }
+    }
+    glEnd();
 }
 function makeTetra() {
 
@@ -328,8 +391,11 @@ function drawObject() {
     //
     // Add other objects for the assignment here.
     //
-    if(showWhich == 4){
+    if (showWhich == 4){
         glBeginEnd("Sphere");
+    }
+    if (showWhich == 5){
+        glBeginEnd("Torus");
     }
     
 }
@@ -386,8 +452,11 @@ function handleKey(key, x, y) {
         showWhich = 3
     }
     //
-    if(key == '4'){
+    if (key == '4'){
         showWhich = 4
+    }
+    if (key == '5'){
+        showWhich = 5
     }
     glutPostRedisplay();
 }
@@ -488,6 +557,7 @@ function main() {
     makeCylinder();
     makeTriangle();
     makeSphere();
+    makeTorus();
     // Register interaction callbacks.
     glutKeyboardFunc(handleKey);
     glutReshapeFunc(resizeWindow);
