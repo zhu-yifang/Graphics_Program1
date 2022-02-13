@@ -379,6 +379,51 @@ function drawBowl(){
     makeRevolution("Bowl", points);
 }
 
+function makePasta(){
+    const numPhi = 32;
+    const dPhi = (2 * Math.PI) / numPhi;
+    glBegin(GL_TRIANGLES, "Pasta", true);
+    const radius0 = 0.2;
+    const radius1 = 0.25;
+    for (let i = 0; i < numPhi; i++){
+        let phi = i * dPhi;
+        let p0_x = radius1 * Math.cos(phi);
+        let p0_y = radius1 * Math.sin(phi);
+        let p0_z = 1;
+        let p1_x = p0_x;
+        let p1_y = p0_y;
+        let p1_z = -p0_z;
+        let p2_x = radius0 * Math.cos(phi + 1/2 * dPhi);
+        let p2_y = radius0 * Math.sin(phi + 1/2 * dPhi);
+        let p2_z = p0_z;
+        let p3_x = radius0 * Math.cos(phi + 1/2 * dPhi);
+        let p3_y = radius0 * Math.sin(phi + 1/2 * dPhi);
+        let p3_z = -p2_z;
+        let p4_x = radius1 * Math.cos(phi + dPhi);
+        let p4_y = radius1 * Math.sin(phi + dPhi);
+        let p4_z = p0_z;
+        let p5_x = radius1 * Math.cos(phi + dPhi);
+        let p5_y = radius1 * Math.sin(phi + dPhi);
+        let p5_z = -p4_z;
+        glColor3f(0.83, 0.77, 0.48);
+        glVertex3f(p0_x, p0_y, p0_z);
+        glVertex3f(p1_x, p1_y, p1_z);
+        glVertex3f(p2_x, p2_y, p2_z);
+        glColor3f(0.83, 0.77, 0.48);
+        glVertex3f(p3_x, p3_y, p3_z);
+        glVertex3f(p1_x, p1_y, p1_z);
+        glVertex3f(p2_x, p2_y, p2_z);
+        glColor3f(0.65, 0.48, 0.01);
+        glVertex3f(p2_x, p2_y, p2_z);
+        glVertex3f(p3_x, p3_y, p3_z);
+        glVertex3f(p4_x, p4_y, p4_z);
+        glColor3f(0.65, 0.48, 0.01);
+        glVertex3f(p5_x, p5_y, p5_z);
+        glVertex3f(p3_x, p3_y, p3_z);
+        glVertex3f(p4_x, p4_y, p4_z);
+    }
+    glEnd();
+}
 function makeTetra() {
 
     // This describes the facets of a tetrahedron whose
@@ -457,6 +502,9 @@ function drawObject() {
     if (showWhich == 6){
         glBeginEnd("Bowl");
     }
+    if (showWhich == 7){
+        glBeginEnd("Pasta");
+    }
     
 }
 
@@ -521,9 +569,9 @@ function handleKey(key, x, y) {
     if (key == '6'){
         showWhich = 6
     }
-    // if (key == '7'){
-    //     showWhich = 7
-    // }
+    if (key == '7'){
+        showWhich = 7
+    }
     // if (key == '8'){
     //     showWhich = 8
     // }
@@ -631,6 +679,7 @@ function main() {
     makeSphere();
     makeTorus();
     drawBowl();
+    makePasta();
     // Register interaction callbacks.
     glutKeyboardFunc(handleKey);
     glutReshapeFunc(resizeWindow);
