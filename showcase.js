@@ -184,6 +184,7 @@ function makeCylinder() {
 function makeSphere(){
     const theta = 0;
     const phi = 0;
+    // numTheta and numPhi for smoothness
     const numTheta = 16;
     const numPhi = 16;
     const dTheta = (Math.PI) / numTheta;
@@ -257,7 +258,8 @@ function makeSphere(){
 }
 
 function makeTorus(){
-    const numBigCircle = 16;
+    // numBigCircle and numSmallCircle for smoothness
+    const numBigCircle = 32;
     const numSmallCircle = 16;
     const dPhi = (2 * Math.PI) / numBigCircle;
     const dTheta = (2 * Math.PI) / numSmallCircle;
@@ -322,6 +324,61 @@ function makeTorus(){
     }
     glEnd();
 }
+
+function makeRevolution(name, points){
+    const smoothness = 32;
+    const dPhi = (2 * Math.PI) / smoothness;
+    const numPoints = points.length;
+
+    glBegin(GL_TRIANGLES, name, true);
+    
+    for (let i = 0; i < smoothness; i++){
+        let phi = i * dPhi;
+        // j < numPoints for closed surface
+        for (let j = 0; j < numPoints - 1; j++){
+            //center0_x = 0;
+            //center0_y = 0;
+            let center0_z = points[j].y;
+            //center1_x = 0;
+            //center1_y = 0;
+            let center1_z = points[j+1].y;
+            let radius0 = Math.abs(points[j].x);
+            let x0 = radius0 * Math.cos(phi);
+            let y0 = radius0 * Math.sin(phi);
+            let z0 = center0_z;
+            let x1 = radius0 * Math.cos(phi + dPhi);
+            let y1 = radius0 * Math.sin(phi + dPhi);
+            let z1 = center0_z;
+            let radius1 = Math.abs(points[j+1].x);
+            let x2 = radius1 * Math.cos(phi);
+            let y2 = radius1 * Math.sin(phi);
+            let z2 = center1_z;
+            let x3 = radius1 * Math.cos(phi + dPhi);
+            let y3 = radius1 * Math.sin(phi + dPhi);
+            let z3 = center1_z;
+
+            glColor3f(0.25, 0.50, 0.75);
+            glVertex3f(x0, y0, z0);
+            glVertex3f(x1, y1, z1);
+            glVertex3f(x2, y2, z2);
+            glColor3f(0.50, 0.75, 0.80);
+            glVertex3f(x1, y1, z1);
+            glVertex3f(x2, y2, z2);
+            glVertex3f(x3, y3, z3);
+        }
+    }
+    glEnd()
+}
+
+function drawBowl(){
+    const point0 = new point(0, 0);
+    const point1 = new point(1, 0);
+    const point2 = new point(1.5, 0.5);
+    const point3 = new point(1.5, 1);
+    const points = [point0, point1, point2, point3];
+    makeRevolution("Bowl", points);
+}
+
 function makeTetra() {
 
     // This describes the facets of a tetrahedron whose
@@ -397,6 +454,9 @@ function drawObject() {
     if (showWhich == 5){
         glBeginEnd("Torus");
     }
+    if (showWhich == 6){
+        glBeginEnd("Bowl");
+    }
     
 }
 
@@ -458,6 +518,18 @@ function handleKey(key, x, y) {
     if (key == '5'){
         showWhich = 5
     }
+    if (key == '6'){
+        showWhich = 6
+    }
+    // if (key == '7'){
+    //     showWhich = 7
+    // }
+    // if (key == '8'){
+    //     showWhich = 8
+    // }
+    // if (key == '9'){
+    //     showWhich = 9
+    // }
     glutPostRedisplay();
 }
 
@@ -558,6 +630,7 @@ function main() {
     makeTriangle();
     makeSphere();
     makeTorus();
+    drawBowl();
     // Register interaction callbacks.
     glutKeyboardFunc(handleKey);
     glutReshapeFunc(resizeWindow);
